@@ -1,17 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import { http, get, post, put } from './fetchData';
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+interface Todo {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export const App = () => {
+  const [responseData, setResponseData] = useState<Todo[]>();
+  useEffect(() => {
+    const getData = async () => {
+      const response = await get<Todo[]>(
+        'https://jsonplaceholder.typicode.com/todos',
+        { method: 'get' }
+      );
+      console.log(response.parsedBody);
+      setResponseData(response.parsedBody);
+    };
+    const postData = async () => {
+      const postResponse = await post<{ id: number }>(
+        'https://jsonplaceholder.typicode.com/posts',
+        { title: 'test', body: 'body test' }
+      );
+      console.log(postResponse);
+    };
+    postData();
+  }, []);
+  return <div></div>;
+};
+
+ReactDOM.render(<App />, document.querySelector('#root'));
